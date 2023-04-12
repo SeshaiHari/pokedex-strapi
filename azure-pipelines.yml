@@ -1,0 +1,53 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+ batch: true
+ branches:
+  include:
+    - main
+    - stage
+
+pool:
+  vmImage: ubuntu-latest
+
+name: $(date:yyyyMMdd)$(rev:r)
+
+steps:
+- task: PowerShell@2
+  inputs:
+      targetType: 'inline'
+      script: |
+        # Write your PowerShell commands here.
+            
+            [string]$BranchName = "main";
+            [string]$Branch = "$(Build.SourceBranchName)"
+      
+            if ($Branch -eq $BranchName)
+              { 
+                $ImageTag = "prod_$(Build.BuildNumber)"
+                echo "##vso[task.setvariable variable=ImageTag]$ImageTag" 
+              }
+            else
+              {
+                $ImageTag = "stage_$(Build.BuildNumber)"
+                echo "##vso[task.setvariable variable=ImageTag]$ImageTag"
+              }
+
+- task: Docker@0
+  displayName: 'Build Image'
+  inputs:
+    azureSubscription: 'Gamification Azure Connection'
+    azureContainerRegistry: '{"loginServer":"prodgamificationacr.azurecr.io", "id" : "/subscriptions/cd853bea-4464-45e6-8f55-f6daff1eb4e9/resourceGroups/prod-pro-main-rg/providers/Microsoft.ContainerRegistry/registries/prodgamificationacr"}'
+    dockerFile: Dockerfile
+    imageName: 'gamification/gamification-strapi:$(ImageTag)'
+
+- task: Docker@0
+  displayName: 'push image'
+  inputs:
+    azureSubscription: 'Gamification Azure Connection'
+    azureContainerRegistry: '{"loginServer":"prodgamificationacr.azurecr.io", "id" : "/subscriptions/cd853bea-4464-45e6-8f55-f6daff1eb4e9/resourceGroups/prod-pro-main-rg/providers/Microsoft.ContainerRegistry/registries/prodgamificationacr"}'
+    action: 'Push an image'
+    imageName: 'gamification/gamification-strapi:$(ImageTag)'

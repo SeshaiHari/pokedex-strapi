@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gamification_blogs",
+  "info": {
+    "singularName": "gamification-blog",
+    "pluralName": "gamification-blogs",
+    "displayName": "gamificationBlog",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "blogTitle": {
+      "type": "string"
+    },
+    "blogPrimaryImage": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "blogContent": {
+      "type": "richtext"
+    },
+    "blogPublishedDateTime": {
+      "type": "datetime"
+    },
+    "blogReadTime": {
+      "type": "string"
+    },
+    "blogAuthor": {
+      "type": "string"
+    },
+    "blogId": {
+      "type": "customField",
+      "customField": "plugin::field-uuid.uuid"
+    },
+    "blogKeyword": {
+      "type": "string"
+    },
+    "slugBlogTitle": {
+      "type": "uid",
+      "targetField": "blogTitle",
+      "required": true
+    },
+    "isHandPicked": {
+      "type": "boolean"
+    },
+    "isMostPopular": {
+      "type": "boolean"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}
